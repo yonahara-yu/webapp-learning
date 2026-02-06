@@ -1,0 +1,13 @@
+# Terraform
+terraform/.terraform/
+terraform.tfstate
+terraform.tfstate.*
+.terraform.lock.hcl
+
+# Node / React
+node_modules/
+dist/
+build/
+
+# Others
+.DS_Store

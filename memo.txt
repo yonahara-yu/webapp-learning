@@ -1,0 +1,43 @@
+ReactをEC2で表示する手順
+
+ローカルPC
+  └─ React build（dist）
+        ↓
+      EC2
+        ↓
+      Nginx
+        ↓
+      Browser
+
+
+本番用 build を作成
+
+npm run build
+
+→　以下が生成される
+frontend/dist/
+
+
+#destroy/apply時のEC2自動配置フロー
+
+GitHub
+ └─ React build済み dist/
+        ↓
+EC2 起動
+ └─ user_data 実行
+      ├─ nginx install
+      ├─ git clone
+      └─ dist を nginx に配置
+
+terraform apply
+  ↓
+EC2 起動
+  ↓
+user_data 実行
+  ↓
+nginx install
+  ↓
+GitHub から dist 取得
+  ↓
+React 表示
+ｓ

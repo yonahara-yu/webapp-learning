@@ -1,0 +1,26 @@
+#コマンド
+#terraform plan : 変更内容を確認
+#terraform apply : 実際に反映
+#terraform destroy : 全削除 (ec2停止時に実行)
+#plan → apply を必ずセットで行うイメージ
+
+#nginxインストール・起動コマンド（apply時自動実行のため不要）
+#dnf update -y
+#dnf install -y nginx
+#systemctl enable nginx
+#systemctl start nginx
+
+##ec2の停止コマンド（AWS CLI）
+#aws ec2 stop-instances --instance-ids i-xxxx
+
+#SSH接続のコマンド
+#ssh -i ~/.ssh/terraform-ec2 ec2-user@<パブリックIP>
+
+#基本構文
+#resource "<種類>" "<名前>" {
+#  設定 = 値
+#}
+
+#ディレクトリパス
+#/Users/yonaharayu/webapp-learning/terraform
+#
