@@ -69,12 +69,35 @@ resource "aws_instance" "web" {
 
     ##ec2起動時に一度だけ実行
     user_data = <<EOF
-    #!/bin/bash
-    dnf update -y
-    dnf install -y nginx
-    systemctl enable nginx
-    systemctl start nginx
-    EOF
+#!/bin/bash
+set -eux
+
+yum update -y
+yum install -y nginx git
+
+# Node.js 20 をインストール
+curl -fsSL https://rpm.nodesource.com/setup_20.x | bash -
+yum install -y nodejs
+
+# nginx 起動
+systemctl enable nginx
+systemctl start nginx
+
+# GitHub から clone
+cd /tmp
+git clone https://github.com/yonahara-yu/webapp-learning.git
+cd webapp-learning/frontend
+
+# distをビルド
+npm install
+npm run build
+
+# nginx 配信用ディレクトリにコピー
+rm -rf /usr/share/nginx/html/*
+cp -r dist/* /usr/share/nginx/html/
+
+systemctl reload nginx
+EOF
 
     tags = {
         Name = "learning-web"
