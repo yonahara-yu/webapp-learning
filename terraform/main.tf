@@ -79,6 +79,11 @@ yum install -y nginx git
 curl -fsSL https://rpm.nodesource.com/setup_20.x | bash -
 yum install -y nodejs
 
+# nginxの設定ファイル書き込み
+cat <<'NGINXCONF' > /etc/nginx/conf.d/default.conf
+${file("${path.module}/files/nginx.conf")}
+NGINXCONF
+
 # nginx 起動
 systemctl enable nginx
 systemctl start nginx
