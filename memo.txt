@@ -35,9 +35,10 @@ EC2 起動
   ↓
 user_data 実行
   ↓
-nginx install
+nginx git install
   ↓
-GitHub から dist 取得
+GitHub から clone
+  ↓
+distをビルド
   ↓
 React 表示
-ｓ
