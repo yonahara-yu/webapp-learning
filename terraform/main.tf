@@ -2,6 +2,7 @@ provider "aws" {
     region = "ap-northeast-1"
 }
 
+#セキュリティグループの設定
 resource "aws_security_group" "web" {
     name        = "web-sg"
     description = "Security group for web app"
@@ -34,12 +35,14 @@ resource "aws_security_group" "web" {
     }
 }
 
+#キーペアの設定
 resource "aws_key_pair" "terraform_key" {
     key_name   = "terraform-ec2-key"
     public_key = file("~/.ssh/terraform-ec2.pub")
 }
 
 
+#マシンイメージの設定
 data "aws_ami" "amazon_linux" {
     most_recent = true
 
@@ -57,6 +60,7 @@ data "aws_ami" "amazon_linux" {
 }
 
 
+##EC2インスタンスの設定
 resource "aws_instance" "web" {
     ami           = data.aws_ami.amazon_linux.id
     instance_type = "t3.micro"  #無料枠
@@ -108,3 +112,35 @@ EOF
         Name = "learning-web"
     }
 }
+
+#EIPの作成
+resource "aws_eip" "web" {
+    domain = "vpc"
+
+    tags = {
+    Name = "learning-web-eip"
+    }
+}
+
+#EIPをEC2に紐付け
+resource "aws_eip_association" "web" {
+    instance_id   = aws_instance.web.id
+    allocation_id = aws_eip.web.id
+}
+
+#ホストゾーンをterraform管理するとNSレコードがドメイン指定のNSと合致しなくなるので管理対象から外す
+#Route53既存ホストゾーンを参照
+data "aws_route53_zone" "main" {
+    name         = "web-learning.click."
+    private_zone = false
+}
+
+#Aレコード作成
+resource "aws_route53_record" "web" {
+    zone_id = data.aws_route53_zone.main.zone_id
+    name    = "web-learning.click"
+    type    = "A"
+    ttl     = 60
+    records = [aws_eip.web.public_ip]
+}
+
